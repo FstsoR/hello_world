@@ -1,5 +1,5 @@
 # hello_world
-Just an example
+Just a test.
 
 Hi, humans!
 Do it for fun!
