@@ -11,7 +11,7 @@
 #define DEFAULT_PORT "27015" // 服务器监听的端口
 
 // socket服务器
-int SocketServer()
+int SocketServer(char* buff)
 {
 #pragma region 1. 初始化
 	WSADATA wsaData;	// 定义一个结构体成员，存放的是 Windows Socket 初始化信息
@@ -98,9 +98,7 @@ int SocketServer()
 	//当套接字监听连接后，程序必须处理套接字上的连接请求
 	//创建临时套接字对象，以接受来自客户端的连接
 	SOCKET ClientSocket;
-
 	//通常，服务器应用程序将被设计为侦听来自多个客户端的连接。 对于高性能服务器，通常使用多个线程来处理多个客户端连接。 这个示例比较简单，不用多线程
-
 	ClientSocket = INVALID_SOCKET; //INVALID_SOCKET定义代表遮套接字无效
 	//accept函数允许套接字上的传入连接尝试
 	//参数1：一个描述符，用来标识一个套接字，该套接字使用listen函数处于侦听状态。连接实际上是用accept返回的套接字建立的。
@@ -113,9 +111,9 @@ int SocketServer()
 		WSACleanup();
 		return 1;
 	}
-	/*注意：当客户端连接被接受后，服务器应用程序通常会将接受的客户端套接字传递 (ClientSocket 变量) 到工作线程或 i/o 完成端口，并继续接受其他连接。
+	/* 注意：当客户端连接被接受后，服务器应用程序通常会将接受的客户端套接字传递 (ClientSocket 变量) 到工作线程或 i/o 完成端口，并继续接受其他连接。
 	这个示例没有，可以查看Microsoft Windows 软件开发工具包 (SDK) 附带的 高级 Winsock 示例 中介绍了其中部分编程技术的示例。
-	链接：https://docs.microsoft.com/zh-cn/windows/win32/winsock/getting-started-with-winsock*/
+	链接：https://docs.microsoft.com/zh-cn/windows/win32/winsock/getting-started-with-winsock */
 #pragma endregion 5.接受来自客户端的连接(Windows 插槽 2)结束
 
 #pragma region 6. 在服务器上接收和发送数据
@@ -133,6 +131,7 @@ int SocketServer()
 			printf("接收的字节数: %d\n", iResult);
 			printf("接收的信息:");
 			puts(recvbuf);
+			strcpy_s(buff, sizeof(recvbuf), recvbuf);
 			//将缓冲区回传给发送方
 			//发送一个初始缓冲区
 			//send函数参数1：标识已连接套接字的描述符。
@@ -169,7 +168,6 @@ int SocketServer()
 		WSACleanup();
 		return 1;
 	}
-
 	/*第二种关闭方法
 	使用 Windows 套接字 DLL 完成客户端应用程序时，将调用 WSACleanup 函数来释放资源。
 	closesocket(ClientSocket);

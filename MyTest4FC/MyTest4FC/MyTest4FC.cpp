@@ -5,22 +5,56 @@
 
 int Func_InstCall(int (*func)(int, int), int x, int y);
 int Inst_Add(int a, int b);
+int Inst_Sup(int a, int b);
+int Inst_Max(int a, int b);
+int Inst_Min(int a, int b);
 
-extern int SocketServer();
+extern int SocketServer(char* buff);
 
 int main()
 {
-    std::cout << "回调函数\n";
-
     int a = 5;
     int b = 7;
-    int c = Func_InstCall(Inst_Add, a, b);
+    int c = 0;
+    int (*func)(int, int) = NULL;
 
+    //func = Inst_Add;
+    c = Func_InstCall(Inst_Add, a, b);
+
+    std::cout << "默认回调函数\n";
     std::cout << "func result: " << c << "\n" << std::endl;
 
-    int ret = SocketServer();
+    std::cout << "Server\n";
+
+    char inst[512] = { 0 };
+    int ret = SocketServer(inst);
+
+    if (!strcmp(inst, "ADD"))
+    {
+        func = Inst_Add;
+    }
+    else if (!strcmp(inst, "SUP"))
+    {
+        func = Inst_Sup;
+    }
+    else if (!strcmp(inst, "MAX"))
+    {
+        func = Inst_Max;
+    }
+    else if (!strcmp(inst, "MIN"))
+    {
+        func = Inst_Min;
+    }
+    else
+    {
+        ret = -1;
+    }
+    c = Func_InstCall(func, a, b);
+
+    std::cout << "func result: " << c << "\n" << std::endl;
     std::cout << ret << std::endl;
 
+    std::cin >> ret;
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
@@ -43,3 +77,20 @@ int Inst_Add(int a, int b)
 {
     return (a + b);
 }
+
+int Inst_Sup(int a, int b)
+{
+    return (a - b);
+}
+
+int Inst_Max(int a, int b)
+{
+    return ((a >= b ? a : b));
+}
+
+int Inst_Min(int a, int b)
+{
+    return ((a <= b ? a : b));
+}
+
+
